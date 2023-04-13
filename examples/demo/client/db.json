@@ -1,0 +1,16 @@
+{
+    "t_deposit": {
+        "schema": {
+            "fields": [
+                ["id", "uint16"],
+                ["user_name", "str"],
+                ["amount", "int16"],
+                ["date", "int32"]
+            ],
+            "key": {
+                "primary": "id"
+            }
+        },
+        "data": null
+    }
+}
