@@ -1,5 +1,5 @@
-import myutil
-from execution import AndNode, OrNode, NotNode, MatchBitsNode, NodeType
+from privshare import myutil
+from privshare.execution import AndNode, OrNode, NotNode, MatchBitsNode, NodeType
 
 class Pass:
     # Pre-expansion optimization

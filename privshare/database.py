@@ -1,5 +1,6 @@
 import json
 from enum import Enum
+from privshare.sql_parser import Query, QueryType, Predicate
 
 class DataType(Enum):
     UINT8 = "uint8"
@@ -60,7 +61,7 @@ class Table:
         return Table(Schema.deserialize_from_json(table_json["schema"]),
                      table_json["data"])
 
-class DataBase:
+class Database:
     def __init__(self, tables):
         self.tables = tables
 
@@ -78,17 +79,55 @@ class DataBase:
         tables = {}
         for table_name, table_json in db_json.items():
             tables[table_name] = Table.deserialize_from_json(table_json)
-        return DataBase(tables)
+        return Database(tables)
     
     def dump(self):
         return json.dumps(self.serialize_to_json())
     
     @staticmethod
     def from_dump(db_dump):
-        return DataBase.deserialize_from_json(json.loads(db_dump))
+        return Database.deserialize_from_json(json.loads(db_dump))
+    
+    def process(self, query: Query):
+        table = self[query.concerned_table]
+        if query.type == QueryType.RETRIEVE:
+            concerned_columns_id = [table.schema.get_id(concerned_column) 
+                                   for concerned_column in query.concerned_columns]
+            result = []
+            for record in table.data:
+                if query.pred.check(record, table.schema):
+                    values = [record[concerned_column_id] 
+                              for concerned_column_id in concerned_columns_id]
+                    result.append(values)
+            return result
+        elif query.type == QueryType.AGGREGATE_CNT:
+            result = 0
+            for record in table.data:
+                if query.pred.check(record, table.schema):
+                    result += 1
+            return result
+        elif query.type == QueryType.AGGREGATE_SUM:
+            concerned_column_id = table.schema.get_id(query.concerned_column)
+            result = 0
+            for record in table.data:
+                if query.pred.check(record, table.schema):
+                    result += record[concerned_column_id]
+            return result
+        elif query.type == QueryType.AGGREGATE_AVG:
+            concerned_column_id = table.schema.get_id(query.concerned_column)
+            result_cnt, result_sum = 0, 0
+            for record in table.data:
+                if query.pred.check(record, table.schema):
+                    result_cnt += 1
+                    result_sum += record[concerned_column_id]
+            return result_sum/result_cnt
+        else:
+            raise NotImplementedError
 
 if __name__ == "__main__":
     # Test
     with open("./examples/demo/provider_1/db.json") as f:
-        db = DataBase.deserialize_from_json(json.load(f)) 
-    print(db.dump())
+        db = Database.deserialize_from_json(json.load(f)) 
+    sql = "SELECT AVG(amount) FROM t_deposit WHERE user_name = \"Daniel\""
+    query = Query(sql)
+    print(db.process(query))

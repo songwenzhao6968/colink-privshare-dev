@@ -55,9 +55,9 @@ class Predicate:
 
     def check(self, record, schema):
         if self.type == "AND":
-            return self.left_child.check(record) and self.right_child.check(record)
+            return self.left_child.check(record, schema) and self.right_child.check(record, schema)
         elif self.type == "OR":
-            return self.left_child.check(record) or self.right_child.check(record)
+            return self.left_child.check(record, schema) or self.right_child.check(record, schema)
         elif self.type == "<":
             return record[schema.get_id(self.concerned_column)] < self.value
         elif self.type == "<=":
@@ -108,7 +108,8 @@ class QueryType(Enum):
     AGGREGATE_CNT_UNQ = "aggregate_count_unique"
 
 class Query:
-    def __init__(self, sql=None, type=None, concerned_column=None, concerned_table=None, pred=None):
+    def __init__(self, sql=None, type=None, concerned_table=None, 
+                 concerned_column=None, concerned_columns=None, pred=None):
         def get_tokens(sql):
             tokens, i, pre = [], 0, 0
             while i < len(sql):
@@ -125,8 +126,9 @@ class Query:
 
         if sql == None:
             self.type = type
-            self.concerned_column = concerned_column
             self.concerned_table = concerned_table
+            self.concerned_column = concerned_column
+            self.concerned_columns = concerned_columns
             self.pred = pred
             return
         # Seperate different parts
@@ -155,11 +157,13 @@ class Query:
             elif func == "COUNT_UNIQUE":
                 self.type = QueryType.AGGREGATE_CNT_UNQ
             self.concerned_column = column.replace(')', '')
+            self.concerned_columns = None
         else:
             self.type = QueryType.RETRIEVE
-            self.concerned_column = []
+            self.concerned_columns = []
             for token in tokens_select:
-                self.concerned_column.append(token.replace(',', ''))
+                self.concerned_columns.append(token.replace(',', ''))
+            self.concerned_column = None
         self.concerned_table = tokens[from_l:from_r][0]
         self.pred = Predicate.generate_predicates(tokens[where_l:])
 
@@ -172,8 +176,9 @@ class Query:
     def serialize_to_json(self):
         return {
             "type": self.type.value,
-            "concerned_column": self.concerned_column,
             "concerned_table": self.concerned_table,
+            "concerned_column": self.concerned_column,
+            "concerned_columns": self.concerned_columns,
             "predicate": self.pred.serialize_to_json()
         }
 
@@ -181,8 +186,9 @@ class Query:
     def deserialize_from_json(query_json):
         return Query(
             type=QueryType(query_json["type"]),
-            concerned_column=query_json["concerned_column"],
             concerned_table=query_json["concerned_table"],
+            concerned_column=query_json["concerned_column"],
+            concerned_columns=query_json["concerned_columns"],
             pred=Predicate.deserialize_from_json(query_json["predicate"])
         )
     
@@ -196,7 +202,7 @@ class Query:
 
 if __name__ == "__main__":
     # Test
-    sql = "SELECT SUM(deposit) FROM t_deposit WHERE (user_name = \"Robert\" AND id < 16) OR id >= 8"
+    sql = "SELECT SUM(amount) FROM t_deposit WHERE (user_name = \"Robert\" AND id < 16) OR id >= 8"
     query_dump = Query(sql).dump()
     print(query_dump)
     query = Query.from_dump(query_dump)

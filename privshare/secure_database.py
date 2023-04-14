@@ -1,8 +1,8 @@
 import json
-import myutil
+from privshare import myutil
 import numpy as np
-from he import PyCtxt
-from sql_parser import Query, QueryType
+from privshare.he import PyCtxt
+from privshare.database import Database, Table, Query, QueryType
 
 class SecureResult():
     def __init__(self, valid_slot_num, query_type, result_cipher=None):
@@ -38,8 +38,8 @@ class SecureResult():
         else:
             return result[0]
 
-from execution import ExecutionTree, MatchBitsNode, NodeType
-from execution_pass import Pass
+from privshare.execution import ExecutionTree, MatchBitsNode, NodeType
+from privshare.execution_pass import Pass
 
 class SecureQuery():
     def __init__(self, query: Query=None, schema=None, HE=None, config=None, debug=None,
@@ -108,6 +108,18 @@ class SecureQuery():
             cipher.from_bytes(ciphers_bytes[id])
             secure_query.mapping_ciphers.append(cipher)
         return secure_query
+
+class SecureDatabase(Database):
+    def process(self, secure_query: SecureQuery, HE, debug):
+        return secure_query.exe_tree.process(self, secure_query.mapping_ciphers, HE, debug)
     
-    def process(self, db, HE, debug):
-        return self.exe_tree.process(db, self.mapping_ciphers, HE, debug)
+    @staticmethod
+    def deserialize_from_json(db_json):
+        tables = {}
+        for table_name, table_json in db_json.items():
+            tables[table_name] = Table.deserialize_from_json(table_json)
+        return SecureDatabase(tables)
+    
+    @staticmethod
+    def from_dump(db_dump):
+        return SecureDatabase.deserialize_from_json(json.loads(db_dump))

@@ -1,4 +1,4 @@
-import myutil
+from privshare import myutil
 import numpy as np
 from Pyfhel import Pyfhel, PyCtxt
 
@@ -18,6 +18,18 @@ def create_he_object(config=None, n=1<<14, t_bits=18, sec=128):
     HE.keyGen()
     HE.rotateKeyGen()
     HE.relinKeyGen()
+    return HE
+
+def save_to_bytes(HE):
+    return HE.to_bytes_context(), HE.to_bytes_secret_key(), HE.to_bytes_public_key(), HE.to_bytes_rotate_key(), HE.to_bytes_relin_key()
+
+def load_from_bytes(keys_bytes):
+    HE = Pyfhel()
+    HE.from_bytes_context(keys_bytes[0])
+    HE.from_bytes_secret_key(keys_bytes[1])
+    HE.from_bytes_public_key(keys_bytes[2])
+    HE.from_bytes_rotate_key(keys_bytes[3])
+    HE.from_bytes_relin_key(keys_bytes[4])
     return HE
 
 def save_public_to_bytes(HE): 

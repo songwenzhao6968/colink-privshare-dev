@@ -1,11 +1,10 @@
 import json
 from enum import Enum
-import myutil
+from privshare import myutil
 import numpy as np
-import he
-from sql_parser import Query, QueryType, Predicate
-from database import DataType
-from secure_query import SecureResult
+from privshare import he
+from privshare.database import DataType, Query, QueryType, Predicate
+from privshare.secure_database import SecureResult
 
 class NodeType(Enum):
     RETURN = "return"
@@ -429,7 +428,7 @@ class ExecutionTree():
             return
         self.root = ReturnNode(query.concerned_table)
         if query.is_retrieve():
-            node_op = RetrievalNode(query.concerned_column)
+            node_op = RetrievalNode(query.concerned_columns)
         elif query.is_aggregate():
             node_op = AggregationNode(query.type, query.concerned_column)
         self.root.link(node_op)
