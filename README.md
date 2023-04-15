@@ -28,11 +28,11 @@ Client runs a script that create an interactive interface to read a query and is
 ```shell
 python client.py <addr> <user_jwt> \
     <server user_id>
+# Example query: SELECT AVG(amount) FROM t_deposit WHERE user_name = "Daniel"
 ```
 
 ### Instant Server Simulation
 
 ```shell
 python run_with_instant_server.py
-# Example query: SELECT AVG(amount) FROM t_deposit WHERE user_name = "Daniel"
 ```
