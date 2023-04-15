@@ -3,8 +3,8 @@ from privshare import myutil, he
 from privshare.database import Database, Query
 from privshare.secure_database import SecureDatabase, SecureQuery, SecureResult
 
-config_dir = "./examples/demo/config.json"
-with open(config_dir) as f:
+config_loc = "./examples/demo/config.json"
+with open(config_loc) as f:
     config = json.load(f)
 debug = config["debug"]
 
