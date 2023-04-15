@@ -1,12 +1,8 @@
 from typing import List
 import json
 import colink as CL
-from colink import (
-    CoLink, 
-    byte_to_str,
-    ProtocolOperator
-)
-import he
+from colink import CoLink, byte_to_str, ProtocolOperator
+from privshare import he
 
 pop = ProtocolOperator(__name__)
 

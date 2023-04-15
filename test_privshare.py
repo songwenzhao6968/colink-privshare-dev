@@ -1,6 +1,5 @@
 import json
-from privshare import myutil
-from privshare import he
+from privshare import myutil, he
 from privshare.database import Database, Query
 from privshare.secure_database import SecureDatabase, SecureQuery, SecureResult
 
