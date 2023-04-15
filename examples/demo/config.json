@@ -19,7 +19,7 @@
     },
     "servers": {
         "provider_1": {
-            "type": "local",
+            "type": "remote",
             "database_file_loc": "./examples/demo/provider_1/db.json"
         }
     }
