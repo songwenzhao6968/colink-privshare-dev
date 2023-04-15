@@ -26,7 +26,7 @@ secure_query_dump, ciphers_bytes = secure_query.dump()
 if debug["output_secure_execution_tree"]: 
     print(secure_query_dump)
 
-# Data Provider: Process encrypted query
+# Data Provider: Process encrypted query and send encrypted result to the client
 with open(config["servers"]["provider_1"]["database_file_loc"]) as f:
     db = SecureDatabase.deserialize_from_json(json.load(f))
 HE_pub = he.load_public_from_bytes(pub_keys_bytes)
