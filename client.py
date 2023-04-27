@@ -39,9 +39,9 @@ def start_interactive_client(cl: CoLink, participants, config):
         if command.find("EXIT") != -1:
             return
         elif command.find("USE") != -1:
-            if command.find("INSECURE"):
+            if command.find("INSECURE") != -1:
                 running_config["using_secure_context"] = False
-            elif command.find("SECURE"):
+            elif command.find("SECURE") != -1:
                 running_config["using_secure_context"] = True
             result = "Context switched"
         elif command.find("SELECT") != -1:

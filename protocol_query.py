@@ -3,14 +3,33 @@ from typing import List
 import json
 import colink as CL
 from colink import CoLink, ProtocolOperator, byte_to_str, byte_to_int
-from myutil import read_large_entry
+from myutil import create_large_entry, read_large_entry
 from privshare import he
 from privshare.database import Database, Schema, Query
 from privshare.secure_database import SecureDatabase, SecureQuery, SecureResult
 
-pop_query = ProtocolOperator(__name__)
+pop = ProtocolOperator(__name__)
 
-@pop_query.handle("query:client")
+@pop.handle("key_setup:client")
+def run_client(cl: CoLink, param: bytes, participants: List[CL.Participant]):
+    config = json.loads(byte_to_str(param))
+    HE = he.create_he_object(config)
+    keys_bytes = he.save_to_bytes(HE)
+    for i, key_bytes in enumerate(keys_bytes):
+        create_large_entry(cl, ":".join(["key", str(i)]), key_bytes)
+    pub_keys_bytes = he.save_public_to_bytes(HE)
+    for i, key_bytes in enumerate(pub_keys_bytes):
+        cl.set_variable(":".join(["key", str(i)]), key_bytes, [participants[1]])
+    cl.get_variable("key_saved", participants[1])
+
+@pop.handle("key_setup:provider")
+def run_provider(cl: CoLink, param: bytes, participants: List[CL.Participant]):
+    for i in range(4):
+        key_bytes = cl.get_variable(":".join(["key", str(i)]), participants[0])
+        create_large_entry(cl, ":".join(["key", str(i)]), key_bytes)
+    cl.set_variable("key_saved", b"\x01", [participants[0]])
+
+@pop.handle("query:client")
 def run_client(cl: CoLink, param: bytes, participants: List[CL.Participant]):
     config = json.loads(byte_to_str(param))
     if not config["using_secure_context"]:
@@ -49,7 +68,7 @@ def run_client(cl: CoLink, param: bytes, participants: List[CL.Participant]):
         result = secure_result.decrypt(HE)
         cl.create_entry("result", json.dumps(result))
 
-@pop_query.handle("query:provider")
+@pop.handle("query:provider")
 def run_provider(cl: CoLink, param: bytes, participants: List[CL.Participant]):
     config = json.loads(byte_to_str(param))
     if not config["using_secure_context"]:

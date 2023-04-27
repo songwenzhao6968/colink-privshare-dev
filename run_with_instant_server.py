@@ -1,8 +1,7 @@
 import json
 import colink as CL
 from colink import InstantServer, InstantRegistry
-from protocol_key_setup import pop_key_setup
-from protocol_query import pop_query
+from protocol_query import pop
 from provider import provider_setup
 from client import client_setup, start_interactive_client
 
@@ -16,10 +15,8 @@ is_c = InstantServer()
 is_p = InstantServer()
 cl_c = is_c.get_colink().switch_to_generated_user()
 cl_p = is_p.get_colink().switch_to_generated_user()
-pop_key_setup.run_attach(cl_c)
-pop_key_setup.run_attach(cl_p)
-pop_query.run_attach(cl_c)
-pop_query.run_attach(cl_p)
+pop.run_attach(cl_c)
+pop.run_attach(cl_p)
 
 provider_setup(cl_p, config["servers"]["provider_1"])
 
