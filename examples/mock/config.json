@@ -1,0 +1,26 @@
+{
+    "debug": {
+        "timing": true,
+        "output_secure_execution_tree": false
+    },
+    "compile": {
+        "basic_block_bit_width": 8
+    },
+    "he": {
+        "poly_modulus_degree_bit_size": 14,
+        "plain_modulus_bit_size": 18,
+        "security_parameter": 128
+    },
+    "tables": {
+        "t_transaction": {
+            "schema_file_loc": "./examples/mock/client/db.json",
+            "providers": ["provider_1"]
+        }
+    },
+    "servers": {
+        "provider_1": {
+            "type": "remote",
+            "database_file_loc": "./examples/mock/provider_1/db.json"
+        }
+    }
+}

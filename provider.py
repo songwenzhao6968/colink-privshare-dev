@@ -10,7 +10,7 @@ def provider_setup(cl: CoLink, config):
     cl.create_entry("database", db.dump())
 
 if __name__ == "__main__":
-    config_file_loc = "./examples/demo/config.json"
+    config_file_loc = "./examples/mock/config.json"
     with open(config_file_loc) as f:
         config = json.load(f)
     addr = sys.argv[1]

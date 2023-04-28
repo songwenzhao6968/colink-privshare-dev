@@ -2,6 +2,24 @@
 
 Distributed private database management system built with CoLink.
 
+### Mock Database Description
+
+#### Table
+
+t_transaction
+
+#### Schema
+
+transaction_id | user_id | sector_name | asset_name | asset_type | volume | volume_for_buy | volume_for_sell | price | price_for_buy | price_for_sell | is_buy | time
+
+#### Query Examples
+
+```sql
+SELECT AVG(price_for_buy) FROM t_transaction WHERE user_id = 36 AND volume_for_buy >= 500
+SELECT COUNT(*) FROM t_transaction WHERE asset_type = "Cash" AND is_buy = 1
+SELECT SUM(volume) FROM t_transaction WHERE user_id < 12 OR asset_name = "Apple"
+```
+
 ## Requirements
 
 + Python 3.9
@@ -28,7 +46,6 @@ Client runs a script that create an interactive interface to read a query and is
 ```shell
 python client.py <addr> <user_jwt> \
     <server user_id>
-# Example query: SELECT AVG(amount) FROM t_deposit WHERE user_name = "Daniel"
 ```
 
 ### Instant Server Simulation

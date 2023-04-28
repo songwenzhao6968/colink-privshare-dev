@@ -55,7 +55,7 @@ if __name__ == "__main__":
     jwt = sys.argv[2]
     provider_names = [sys.argv[3]]
     provider_user_ids = [sys.argv[4]]
-    config_file_loc = "./examples/demo/config.json"
+    config_file_loc = "./examples/mock/config.json"
     with open(config_file_loc) as f:
         config = json.load(f)
     cl = CoLink(addr, jwt)

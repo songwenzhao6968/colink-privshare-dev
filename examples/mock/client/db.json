@@ -1,0 +1,25 @@
+{
+    "t_transaction": {
+        "schema": {
+            "fields": [
+                ["transaction_id", "uint32"],
+                ["user_id", "uint8"],
+                ["sector_name", "str"],
+                ["asset_name", "str"],
+                ["asset_type", "str"],
+                ["volume", "int16"],
+                ["volume_for_buy", "uint16"],
+                ["volume_for_sell", "uint16"],
+                ["price", "int16"],
+                ["price_for_buy", "uint16"],
+                ["price_for_sell", "uint16"],
+                ["is_buy", "uint8"],
+                ["time", "uint32"]
+            ],
+            "key": {
+                "primary": "transaction_id"
+            }
+        },
+        "data": null
+    }
+}

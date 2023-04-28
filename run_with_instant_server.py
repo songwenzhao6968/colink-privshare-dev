@@ -5,7 +5,7 @@ from protocol_query import pop
 from provider import provider_setup
 from client import client_setup, start_interactive_client
 
-config_file_loc = "./examples/demo/config.json"
+config_file_loc = "./examples/mock/config.json"
 with open(config_file_loc) as f:
     config = json.load(f)
 
