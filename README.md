@@ -31,7 +31,6 @@ SELECT SUM(volume) FROM t_transaction WHERE user_id < 12 OR asset_name = "Apple"
 Create two new terminals and start protocol operators for the client and the server separately.
 
 ```shell
-python protocol_key_setup.py --addr <addr> --jwt <user_jwt>
 python protocol_query.py --addr <addr> --jwt <user_jwt>
 ```
 
