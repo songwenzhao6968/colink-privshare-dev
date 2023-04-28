@@ -36,7 +36,7 @@ class SecureResult():
         if self.query_type == QueryType.AGGREGATE_AVG:
             return result[1]/result[0]
         else:
-            return result[0]
+            return int(result[0])
 
 from privshare.execution import ExecutionTree, MatchBitsNode, NodeType
 from privshare.execution_pass import Pass
