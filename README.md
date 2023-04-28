@@ -12,7 +12,7 @@ t_transaction
 
 transaction_id | user_id | sector_name | asset_name | asset_type | volume | volume_for_buy | volume_for_sell | price | price_for_buy | price_for_sell | is_buy | time
 
-#### Query Examples
+#### Example Queries
 
 ```sql
 SELECT AVG(price_for_buy) FROM t_transaction WHERE user_id = 36 AND volume_for_buy >= 500
